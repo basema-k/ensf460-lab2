@@ -1,8 +1,8 @@
 /*
  * File:   main.c
- * Author: UPDATE THIS WITH YOUR GROUP MEMBER NAMES OR POTENTIALLY LOSE POINTS
+ * Author: Basema Khan, Michelle Yoon, Vincent Fong
  *
- * Created on: USE THE INFORMATION FROM THE HEADER MPLAB X IDE GENERATES FOR YOU
+ * Created on September 25, 2026, 8:49 AM
  */
 
 // FBS
@@ -51,6 +51,8 @@
 
 #include <xc.h>
 #include "clkChange.h"
+#include "IOs.h"
+#include "delay_ms.h"
 
 // Remember, you can use the "extern" keyword to access global variables defined in other files
 /**
@@ -62,65 +64,71 @@
  */
 
 int main(void) {
-    
-    /** This is usually where you would add run-once code
-     * e.g., peripheral initialization. For the first labs
-     * you might be fine just having it here. For more complex
-     * projects, you might consider having one or more initialize() functions
-     */
-    
     AD1PCFG = 0xFFFF; /* keep this line as it sets I/O pins that can also be analog to be digital */
     
+    IOinit(); // call initialization function
     newClk(500);
+    /*
     
-    TRISBbits.TRISB7 = 1; // RB7
-    TRISBbits.TRISB4 = 1; // RB4
-    TRISAbits.TRISA4 = 1; // RA4
     
-    TRISBbits.TRISB9 = 0; // RB9
-    TRISAbits.TRISA6 = 0; // RA6
+    // clock 1 initialization (only for led2)
+    T1CONbits.TCKPS = 3; // prescaler
+    T1CONbits.TCS = 0; // internal clock
     
-    // Timer2
-    T2CONbits.T32 = 0;
-    T2CONbits.TCKPS = 1; // select the prescaler
-    T2CONbits.TCS = 0; // select internal clock
+    IPC0bits.T1IP = 3;
+    IFS0bits.T1IF = 0;
+    IEC0bits.T1IE = 1;
     
-    // Interrupt
-    IPC1bits.T2IP = 2; // priority
-    IFS0bits.T2IF = 0; // clear flag
-    IEC0bits.T2IE = 1; // enable Timer2 interrupt
+    PR1 = 487;
+    TMR1 = 0;
     
-    PR2 = 7811; // 0.25 sec count value
-    TMR2 = 0;
+    T1CONbits.TON = 1; // start the timer
+           
     
-    LATBbits.LATB9 = 0; // led off
+    LATBbits.LATB9 = 0; // led1 off
+    LATAbits.LATA6 = 0; // led2 off
+     */
     
-    // T2CONbits.TON = 1; // start the timer
-    CNPU2bits.CN23PUE = 1;
-  
     while(1) {
-        if (PORTBbits.RB7 == 0) {
-            T2CONbits.TON = 1; // start the timer
-        } else {
-            T2CONbits.TON = 0;
-            TMR2 = 0;
+        IOcheck();
+        /*
+        if (PORTBbits.RB7 == 1) {
+            if(PORTBbits.RB4 == 0){
+                LATBbits.LATB9 = 1;
+                delay_ms(1);
+                LATBbits.LATB9 = 0;
+                delay_ms(1);
+            } else {
+            LATBbits.LATB9 = 1;
+            delay_ms(250);
+            LATBbits.LATB9 = 0;
+            delay_ms(250);
+            }
+        } 
+        else if (PORTBbits.RB4 == 1) {
+            LATBbits.LATB9 = 1;
+            delay_ms(1000);   
+            LATBbits.LATB9 = 0;
+            delay_ms(1000); 
+        }
+        else if (PORTAbits.RA4 == 1){
+            LATBbits.LATB9 = 1;
+            delay_ms(6000);
+            LATBbits.LATB9 = 0;
+            delay_ms(6000);
+        }
+        else {
             LATBbits.LATB9 = 0;
         }
-       
+         */
     }
     
     return 0;
 }
 
+void __attribute__((interrupt, no_auto_psv)) _T1Interrupt(void){
+    LATAbits.LATA6 = !LATAbits.LATA6; // set led2
+    IFS0bits.T1IF = 0; // clear flag
 
-// Timer 2 interrupt service routine
-void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void){
-    LATBbits.LATB9 = !LATBbits.LATB9; //LED2 has to be on 
-    IFS0bits.T2IF = 0;
-    //Don't forget to clear the timer 2 interrupt flag!
 }
-
-
-
-// You might it helpful to define the interrupt service routine for Timer 1 here
 
