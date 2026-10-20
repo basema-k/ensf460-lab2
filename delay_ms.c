@@ -1,9 +1,10 @@
+
 /*
- * File:   delay_ms.c
+ * File:   TimeDelay.c
  * Author: Basema Khan, Michelle Yoon, Vincent Fong
  *
  * Created on September 25, 2026, 9:47 AM
- */
+*/
 
 
 #include "xc.h"
@@ -28,17 +29,22 @@ void delay_ms(uint16_t time_ms){
         T2CONbits.T32 = 1;
         PR3 = (PR >> 16) & 0xFFFF;
         PR2 = PR & 0xFFFF;
+        IPC2bits.T3IP = 4; // priority
+        IFS0bits.T3IF = 0; // clear flag
+        IEC0bits.T2IE = 0; // enable Timer2 interrupt
+        IEC0bits.T3IE = 1;
     } else {
         T2CONbits.T32 = 0;
         PR2 = PR;
+        IPC1bits.T2IP = 4; // priority
+        IFS0bits.T2IF = 0; // clear flag
+        IEC0bits.T2IE = 1; // enable Timer2 interrupt
+        IEC0bits.T3IE = 0;
     }
     T2CONbits.TCKPS = 1; // select the prescaler (1:8)
     T2CONbits.TCS = 0; // select internal clock
-    
-    // interrupt setup
-    IPC1bits.T2IP = 4; // priority
-    IFS0bits.T2IF = 0; // clear flag
-    IEC0bits.T2IE = 1; // enable Timer2 interrupt
+
+   
     
     TMR2 = 0;
     TMR3 = 0;
@@ -53,9 +59,14 @@ void delay_ms(uint16_t time_ms){
 }
 
 void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void){
-    
-    IFS0bits.T2IF = 0; // clear flag
-    T2CONbits.TON = 0; // stop timer
+    IFS0bits.T2IF = 0;     // clear flag
+    T2CONbits.TON = 0;     // stop timer
     T2_done = 0;
-
 }
+
+void __attribute__((interrupt, no_auto_psv)) _T3Interrupt(void){
+    IFS0bits.T3IF = 0;     // clear flag
+    T2CONbits.TON = 0;     
+    T2_done = 0;
+}
+
