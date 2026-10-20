@@ -52,7 +52,7 @@
 #include <xc.h>
 #include "clkChange.h"
 #include "IOs.h"
-#include "delay_ms.h"
+#include "TimeDelay.h"
 
 // Remember, you can use the "extern" keyword to access global variables defined in other files
 /**
@@ -68,8 +68,6 @@ int main(void) {
     
     IOinit(); // call initialization function
     newClk(500);
-    /*
-    
     
     // clock 1 initialization (only for led2)
     T1CONbits.TCKPS = 3; // prescaler
@@ -87,40 +85,10 @@ int main(void) {
     
     LATBbits.LATB9 = 0; // led1 off
     LATAbits.LATA6 = 0; // led2 off
-     */
+     
     
     while(1) {
-        IOcheck();
-        /*
-        if (PORTBbits.RB7 == 1) {
-            if(PORTBbits.RB4 == 0){
-                LATBbits.LATB9 = 1;
-                delay_ms(1);
-                LATBbits.LATB9 = 0;
-                delay_ms(1);
-            } else {
-            LATBbits.LATB9 = 1;
-            delay_ms(250);
-            LATBbits.LATB9 = 0;
-            delay_ms(250);
-            }
-        } 
-        else if (PORTBbits.RB4 == 1) {
-            LATBbits.LATB9 = 1;
-            delay_ms(1000);   
-            LATBbits.LATB9 = 0;
-            delay_ms(1000); 
-        }
-        else if (PORTAbits.RA4 == 1){
-            LATBbits.LATB9 = 1;
-            delay_ms(6000);
-            LATBbits.LATB9 = 0;
-            delay_ms(6000);
-        }
-        else {
-            LATBbits.LATB9 = 0;
-        }
-         */
+        IOcheck();     
     }
     
     return 0;
