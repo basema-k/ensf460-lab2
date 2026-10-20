@@ -22,6 +22,7 @@ void IOinit(){
     TRISBbits.TRISB7 = 1; // RB7
     TRISBbits.TRISB4 = 1; // RB4
     TRISAbits.TRISA4 = 1; // RA4
+    //TRISAbits.TRISA2 = 1; // RA2
     
     // outputs
     TRISBbits.TRISB9 = 0; // RB9
@@ -30,26 +31,27 @@ void IOinit(){
     CNPU2bits.CN23PUE = 1; // RB7 pull up low active (if pressed it is 0))
     CNPU1bits.CN1PUE = 1; // RB4 pull up low active (if pressed it is 0))
     CNPU1bits.CN0PUE = 1; // RA4 pull up low active (if pressed it is 0))
+    //CNPU2bits.CN30PUE = 1;
+    
     
     LATBbits.LATB9 = 0;
     LATAbits.LATA6 = 0;
 }
 
 void IOcheck(){
-    if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0){
+    if ((PORTBbits.RB7 == 0) && (PORTBbits.RB4 == 0)){
         blinkLED(1);
     }
     else if (PORTBbits.RB7 == 0){
-        blinkLED(250);
+       blinkLED(250);
     }
-    else if (PORTBbits.RB4 == 0) {
+    else if (PORTBbits.RB4 == 0){
         blinkLED(1000);
     }
     else if (PORTAbits.RA4 == 0){
         blinkLED(6000);
     }
-    else {
-        LATBbits.LATB9 = 0;
-    }
+    LATBbits.LATB9 = 0;
+    
     
 }
